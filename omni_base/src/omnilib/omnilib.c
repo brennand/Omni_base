@@ -303,6 +303,17 @@ void omnidrive_status(char *drive0, char *drive1, char *drive2, char *drive3, in
   //  *estop = 0x80 & (status[0] & status[1] & status[2] & status[3]);
 }
 
+double omnidrive_limit(double x, double l){
+	if(x>l) {
+		return l;
+	}
+	
+	if(x<-l){
+		return -l;
+	}
+	
+	return x;
+}
 
 
 

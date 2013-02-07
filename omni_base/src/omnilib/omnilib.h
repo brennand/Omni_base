@@ -47,5 +47,7 @@ void omnidrive_poweron();
 void omnidrive_poweroff();
 void omnidrive_recover();
 
+double omnidrive_limit(double x, double l);
+
 
 #endif

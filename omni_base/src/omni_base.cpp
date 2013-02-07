@@ -27,13 +27,9 @@
 #include <omni_base_msgs/PowerState.h>
 #include <std_msgs/Float64MultiArray.h>
 
-
 extern "C" {
 #include "omnilib/omnilib.h"
 }
-
-#define LIMIT(x, l) ( (x>l) ? l : (x<-l) ? -l : x )
-
 
 
 /*****************************************************************************/
@@ -192,11 +188,11 @@ void Omnidrive::main()
       // acceleration limiting
       double acc = drive_[i] - drive_last_[i];
       double fac_rot = (i == 2) ? 1.0/radius : 1.0;
-      acc = LIMIT(acc, acc_max*fac_rot*fac_rot);
+      acc = omnidrive_limit(acc, acc_max*fac_rot*fac_rot);
       drive_[i] = drive_last_[i] + acc;
 
       // velocity limiting
-      drive_[i] = LIMIT(drive_[i], speed*fac_rot);
+      drive_[i] = omnidrive_limit(drive_[i], speed*fac_rot);
 
       drive_last_[i] = drive_[i];
     }
