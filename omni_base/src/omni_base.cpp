@@ -141,7 +141,7 @@ void Omnidrive::main()
 
   if(omnidrive_init() != 0) {
     ROS_ERROR("failed to initialize omnidrive");
-    ROS_ERROR("Check that hte base is turned on, if it is ask a supervisor!");
+    ROS_ERROR("Check that the base is turned on, if it is ask a supervisor!");
     return;
   }
   // This function is used to add a correction value if the base seems to be slightly off.
@@ -156,7 +156,7 @@ void Omnidrive::main()
 
 
   ros::Rate r(loop_frequency);
-	printf("Entering ROS main loop\n");	
+	printf("Entering ROS main loop\n");
   while(n_.ok()) {
 
 		

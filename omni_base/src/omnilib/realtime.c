@@ -200,7 +200,7 @@ int start_omni_realtime(int max_vel)
     }
 
 
-	printf("Started.\n");
+	printf(" Realtime thread Started.\n");
 
 	return 1;
 }

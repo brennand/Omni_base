@@ -71,11 +71,11 @@ int omnidrive_init(void)
 	// Return -1 if the initialization did not work
 		
 	if(start_omni_realtime(max_tick_speed)){
-		printf("Returning happy\n");
+		printf("Realtime thread started\n");
   	return 0;
 	}
 
-	printf("Returning Not happy\n");
+	printf("Realtime thread failed to start\n");
   return -1;
 
 }
