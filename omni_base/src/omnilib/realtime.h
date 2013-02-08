@@ -38,4 +38,4 @@ void omni_write_data(struct omniwrite data);
 struct omniread omni_read_data();
 
 int start_omni_realtime(int max_vel);
-void stop_omni_realtime(x, l);
+void stop_omni_realtime(void);

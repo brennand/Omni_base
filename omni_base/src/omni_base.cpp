@@ -27,9 +27,9 @@
 #include <omni_base_msgs/PowerState.h>
 #include <std_msgs/Float64MultiArray.h>
 
-extern "C" {
+
 #include "omnilib/omnilib.h"
-}
+
 
 
 /*****************************************************************************/
