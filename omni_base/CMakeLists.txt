@@ -6,5 +6,5 @@ rosbuild_init()
 #set the default path for built executables to the "bin" directory
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 
-rosbuild_add_executable(omni_base src/omni_base.cpp src/omnilib/omnilib.c src/omnilib/realtime.c)
+rosbuild_add_executable(omni_base src/omni_base.cpp src/omnilib/omnilib.cpp src/omnilib/realtime.cpp src/udplib/Communication.cpp src/udplib/headClass.cpp src/udplib/UdpSocket.cpp)
 

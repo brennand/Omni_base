@@ -33,13 +33,18 @@
 
 #include "realtime.h"  // defines omniread_t, omniwrite_t
 
-
+#include "../udplib/Communication.h"
+#include "../udplib/headClass.h"
 
 /*****************************************************************************/
 	
 #define FREQUENCY 1000
 
 /*****************************************************************************/
+
+char* const IP_FPGA   = "10.0.200.168";
+Head head;
+UDP udptoFPGA(&head,IP_FPGA,1024,1024);
 
 
 
@@ -58,9 +63,16 @@ static omniread_t cur, cur_buffer;    /* Current velocities/torques/positions */
 
 void cyclic_task()
 {
-
+	head.get_control = full_Controller;
 	
-	//Talt to the controllers
+	udptoFPGA.Zip_packet();
+    if(udptoFPGA.Send()){
+        if(udptoFPGA.Received()){
+            udptoFPGA.Unzip_packet();
+       }//udp.Received
+    }//udptoFPGA.Send()
+
+	//Talk to the controllers
 	
 	//send tar
 	
@@ -70,8 +82,6 @@ void cyclic_task()
 	
 	//  cur.position = ;
 	//  cur.actual_velocity = ;
-
-printf(" :-) \n");
 
 }
 
