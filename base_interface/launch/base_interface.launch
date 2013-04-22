@@ -1,0 +1,5 @@
+<launch>
+    	 
+    	<node name="base_interface" pkg="base_interface" type="base_interface"  output="screen"/>
+    	<include file="$(find base_interface)/launch/base_parameter_server.launch"/>
+</launch>

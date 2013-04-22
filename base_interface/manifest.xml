@@ -1,0 +1,17 @@
+<package>
+  <description brief="base_interface">
+
+     head_interface
+
+  </description>
+  <author>ics robot</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/head_interface</url>
+  <depend package="roscpp"/>
+  <depend package="sensor_msgs"/>
+  <depend package="omni_base_msgs"/>
+
+</package>
+
+
