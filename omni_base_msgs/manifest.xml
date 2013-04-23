@@ -1,7 +1,0 @@
-<package>
-  <description>Omni Base messages</description>
-  <author>Alexis Maldonado, Brennand Pierce</author>
-  <license>BЅD</license>
-  <depend package="roslib"/>
-</package>
-
