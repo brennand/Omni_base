@@ -6,7 +6,7 @@
 
 #include "ros/ros.h"
 #include "sensor_msgs/JointState.h"
-
+#include "sensor_msgs/Joy.h"
 
 #include <string>
 #include <vector>
@@ -19,6 +19,44 @@
 using namespace XmlRpc;
 using namespace std;
 
+#define PS3_BUTTON_SELECT            0
+#define PS3_BUTTON_STICK_LEFT        1
+#define PS3_BUTTON_STICK_RIGHT       2
+#define PS3_BUTTON_START             3
+#define PS3_BUTTON_CROSS_UP          4
+#define PS3_BUTTON_CROSS_RIGHT       5
+#define PS3_BUTTON_CROSS_DOWN        6
+#define PS3_BUTTON_CROSS_LEFT        7
+#define PS3_BUTTON_REAR_LEFT_2       8
+#define PS3_BUTTON_REAR_RIGHT_2      9
+#define PS3_BUTTON_REAR_LEFT_1       10
+#define PS3_BUTTON_REAR_RIGHT_1      11
+#define PS3_BUTTON_ACTION_TRIANGLE   12
+#define PS3_BUTTON_ACTION_CIRCLE     13
+#define PS3_BUTTON_ACTION_CROSS      14
+#define PS3_BUTTON_ACTION_SQUARE     15
+#define PS3_BUTTON_PAIRING           16
+
+#define PS3_AXIS_STICK_LEFT_LEFTWARDS    0
+#define PS3_AXIS_STICK_LEFT_UPWARDS      1
+#define PS3_AXIS_STICK_RIGHT_LEFTWARDS   2
+#define PS3_AXIS_STICK_RIGHT_UPWARDS     3
+#define PS3_AXIS_BUTTON_CROSS_UP         4
+#define PS3_AXIS_BUTTON_CROSS_RIGHT      5
+#define PS3_AXIS_BUTTON_CROSS_DOWN       6
+#define PS3_AXIS_BUTTON_CROSS_LEFT       7
+#define PS3_AXIS_BUTTON_REAR_LEFT_2      8
+#define PS3_AXIS_BUTTON_REAR_RIGHT_2     9
+#define PS3_AXIS_BUTTON_REAR_LEFT_1      10
+#define PS3_AXIS_BUTTON_REAR_RIGHT_1     11
+#define PS3_AXIS_BUTTON_ACTION_TRIANGLE  12
+#define PS3_AXIS_BUTTON_ACTION_CIRCLE    13
+#define PS3_AXIS_BUTTON_ACTION_CROSS     14
+#define PS3_AXIS_BUTTON_ACTION_SQUARE    15
+#define PS3_AXIS_ACCELEROMETER_LEFT      16
+#define PS3_AXIS_ACCELEROMETER_FORWARD   17
+#define PS3_AXIS_ACCELEROMETER_UP        18
+#define PS3_AXIS_GYRO_YAW                19
 
 void getParamVector_int(ros::NodeHandle, string,vector<int> *);
 void getParamVector_double(ros::NodeHandle, string,vector<double> *);
@@ -34,12 +72,23 @@ std::vector<double> des_pos;
 std::vector<double> des_vel;  
 std::vector<double> des_eff; 
 
+double des = 0.0;
+
+sensor_msgs::Joy::ConstPtr joy_msg;
 
 void desiredCallback(const sensor_msgs::JointState::ConstPtr& msg){
 
     pos = msg->position;
     vel = msg->velocity;
     eff = msg->effort;
+}
+
+void ps3dataCallback(const sensor_msgs::Joy::ConstPtr& msg){
+
+	joy_msg = msg;
+
+        des = 10.0*joy_msg->axes[PS3_AXIS_STICK_LEFT_UPWARDS];
+
 }
 
 int main(int argc, char **argv)
@@ -51,7 +100,8 @@ int main(int argc, char **argv)
   //This is the msg listener and the msg caster.
   ros::Publisher js_pub = n.advertise<sensor_msgs::JointState>("/base_interface/command", 1000);
   ros::Subscriber sub = n.subscribe("/base_interface/state", 1000, desiredCallback); //Des_joint_states_Bioloid
-
+  ros::Subscriber ps3_sub = n.subscribe("/joy", 1000, ps3dataCallback);
+  
   bool on_off;
 
 
@@ -67,6 +117,9 @@ int main(int argc, char **argv)
   ros::Rate loop_rate(1000);
   //Initialice the time.
   ros::Time::init();
+
+
+	
 
   int counter = 0;
   int change_counter = 0;
@@ -84,7 +137,7 @@ int main(int argc, char **argv)
   while (ros::ok())
   {
     //Send Joint states
-	double des;
+//	double des;
     counter ++;
     sensor_msgs::JointState js;
     js.header.seq = counter;
@@ -94,11 +147,13 @@ int main(int argc, char **argv)
     js.name = name;
     //Send a packet then wait for the packet to be returned.
 
-	des = 4*sin(counter*0.01);
+//des = 2*sin(counter*0.0001);
 
 
+//	des = joy_msg->axes[PS3_AXIS_STICK_LEFT_UPWARDS];
 
-
+	//des = 10.0;
+		
 	des_vel.clear();   
 
     for (unsigned int i = 0 ; i < name.size() ; ++i){
