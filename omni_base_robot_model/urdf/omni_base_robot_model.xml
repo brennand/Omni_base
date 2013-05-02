@@ -1,0 +1,24 @@
+<robot name="omni_base">
+  <link name="base">
+
+  </link>
+  
+  <link name="Wheel_FR">      
+
+  </link>    
+  <link name="Wheel_FL">      
+
+  </link>   
+  <link name="Wheel_BL">      
+
+  </link>   
+  <link name="Wheel_BR">      
+
+  </link>   
+  
+  <joint name="FR" type="continuous"> <parent link="base"/> <child link="Wheel_FR"/> <origin xyz="0.34475 0.28 0" rpy="0 0 1.57" />   <axis xyz="0 1 0" /></joint>
+  <joint name="FL" type="continuous"> <parent link="base"/> <child link="Wheel_FL"/> <origin xyz="0.34475 -0.28 0" rpy="0 0 1.57" />  <axis xyz="0 1 0" /></joint>  
+  <joint name="BL" type="continuous"> <parent link="base"/> <child link="Wheel_BL"/> <origin xyz="-0.34475 0.28 0" rpy="0 0 1.57" />  <axis xyz="0 1 0" /></joint>
+  <joint name="BR" type="continuous"> <parent link="base"/> <child link="Wheel_BR"/> <origin xyz="-0.34475 -0.28 0" rpy="0 0 1.57" /> <axis xyz="0 1 0" /></joint>
+    
+</robot>

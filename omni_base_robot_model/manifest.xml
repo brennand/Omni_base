@@ -1,0 +1,14 @@
+<package>
+  <description brief="omni_base_robot_model">
+
+     omni_base_robot_model
+
+  </description>
+  <author>jerry</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/omni_base_robot_model</url>
+
+</package>
+
+
