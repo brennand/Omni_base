@@ -48,6 +48,7 @@ void desiredCallback(const sensor_msgs::JointState::ConstPtr& msg){
 
 
 
+
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "base_interface");
@@ -60,8 +61,8 @@ int main(int argc, char **argv)
 
   bool on_off;
 	
-	/******************************************************************
-	*
+  /******************************************************************
+  *
   * 			Get all the variables from the parameter server.
   *
   ******************************************************************/
@@ -87,6 +88,8 @@ int main(int argc, char **argv)
   n.getParam("/robot_param/base/wheels/vel_max",base.vel_max);     
   n.getParam("/robot_param/base/wheels/vel_min",base.vel_min); 
 
+  n.getParam("/robot_param/base/wheels/wheel_Circumfrerence",base.Circumfrerence); 
+
 
   getParamVector_int(n,"/robot_param/base/wheels/motor_direction",&base.motor_direction);
   getParamVector_int(n,"/robot_param/base/wheels/mosfet_config",&base.mosfet_config);
@@ -95,11 +98,12 @@ int main(int argc, char **argv)
 
     
     
+    
   ROS_INFO("Number of wheels: %d", int(base.name.size()));
   ROS_INFO("base interface started.");
  
-	/******************************************************************
-	*
+  /******************************************************************
+  *
   * 			Setup ROS, plus turn the FPGA controller to full control
   *
   ******************************************************************/
@@ -165,8 +169,8 @@ int main(int argc, char **argv)
 
 	base.udp_states.resize(2);	
 
-	/******************************************************************
-	*
+  /******************************************************************
+  *
   * 				Main control loop.
   *
   ******************************************************************/
@@ -196,10 +200,10 @@ int main(int argc, char **argv)
     udptoFPGA_front.Zip_packet(&base);
     if(udptoFPGA_front.Send()){
         if(udptoFPGA_front.Received()){
-						base.udp_states[1] = 1;
+						base.udp_states[0] = 1;
             udptoFPGA_front.Unzip_packet(&base);
         }else{
-					base.udp_states[1] = 0;
+					base.udp_states[0] = 0;
 				}//udp.Received
     }//udptoFPGA.Send()
     
@@ -208,10 +212,10 @@ int main(int argc, char **argv)
     if( udptoFPGA_back.Send()){
         if( udptoFPGA_back.Received()){
 
-						base.udp_states[0] = 1;
+						base.udp_states[1] = 1;
             udptoFPGA_back.Unzip_packet(&base);
         }else{
-					base.udp_states[0] = 0;
+					base.udp_states[1] = 0;
 				}//udp.Received
     }//udptoFPGA.Send()
 
@@ -223,7 +227,20 @@ int main(int argc, char **argv)
     base.eff.clear();    
         // Convert from raw data to real si unit. 
     for (unsigned int i = 0 ; i < base.name.size() ; ++i){
-        base.pos.push_back(((int)(base.raw_pos_revolutions[i]-500000))*base.motor_direction.at(i));//(base.joint_encoder_offset*1000));
+    	
+
+    		int pos_off_setted = (int)(base.raw_pos[i]-500000);
+    
+    		double pos_temp1 = base.Circumfrerence * base.raw_pos_revolutions[i];
+    		double pos_temp2 = base.Circumfrerence * (double)pos_off_setted/(40*base.joint_encoder_res);
+    		
+    		
+    		//	ROS_INFO("0 = %f , 1 = %f, 2 = %f ,3 = %d /n",base.Circumfrerence, pos_temp1,pos_temp2, pos_off_setted);
+    		
+        base.pos.push_back((pos_temp1+pos_temp2)*-1*base.motor_direction.at(i));//(base.joint_encoder_offset*1000));
+    
+    
+    
         base.vel.push_back((double)base.raw_vel[i]/400.0*6.28319*base.motor_direction.at(i));  // 400 = ((tick*1000)/10000)/40 - ((tick/s*1khz)/tick/rev)/gear_ratio
         base.eff.push_back(0.0);  
     }
@@ -267,7 +284,7 @@ int main(int argc, char **argv)
 
 
 
-		//ROS_INFO("PWM: %i = %i = %4.2f - %4.2f", i, base.pwm[i] , base.pos[i], base.des_pos[i]);
+		//ROS_INFO("PWM: %i = %i = %4.2f - %4.2f", i, base.pwm[i] , base.vel[i], base.des_vel[i]);
 			
     }
 

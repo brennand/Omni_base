@@ -2,18 +2,20 @@
   <rosparam ns="/robot_param/base/wheels">
     name:                   [  'FR','FL','BL','BR']
 
-    gain_P:                 600.0
+    gain_P:                 300.0
     gain_I:                 0.0
     gain_D:                 0.0
 
     joint_encoder_res:      10000  
     joint_encoder_offset:   2147483.648
 
-    mosfet_config:          [3,3,3,3]
+    wheel_Circumfrerence: 0.639
+
+    mosfet_config:          [1,1,1,1]
     motor_direction:        [1,-1,-1,1]
 
-    cur_max:                3000 
-    cur_min:                -3000 
+    cur_max:                6000 
+    cur_min:                -6000 
 
     vel_max:              10.0   
     vel_min:              -10.0 
@@ -22,7 +24,7 @@
 
     torque:                 [true,true,true,true]    
 
-    LED:                    1
+    LED:                    0
 
     port:                    [18005, 9000]
     

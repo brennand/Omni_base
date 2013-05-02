@@ -67,6 +67,8 @@ class Base {
         double vel_max;
         double vel_min;
 
+				double Circumfrerence;
+
         //Motor stuff
   			std::vector<bool> torque;
   			std::vector<int> motor_direction;
