@@ -73,6 +73,8 @@ std::vector<double> des_pos;
 std::vector<double> des_vel;  
 std::vector<double> des_eff; 
 
+double des = 0.0;
+
 double des_x = 0.0;
 double des_y = 0.0;
 double des_a = 0.0;
