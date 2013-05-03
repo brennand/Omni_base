@@ -1,4 +1,5 @@
 <launch>
+ <include file="$(find base_interface)/launch/base_interface.launch"/>
  <param name="robot_description" command="cat $(find omni_base_robot_model)/urdf/omni_base_robot_model.xml" />
  <node pkg="robot_state_publisher" type="state_publisher" name="rob_st_pub" >
   <remap from="joint_states" to="base_interface/state" />
