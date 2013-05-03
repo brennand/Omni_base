@@ -1,0 +1,17 @@
+<package>
+  <description brief="mecanum_control">
+
+     mecanum_control
+
+  </description>
+  <author>Alexis Maldonado</author>
+  <license>GPLv3+</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/mecanum_control</url>
+  <depend package="sensor_msgs"/>
+  <depend package="geometry_msgs"/>
+  <depend package="roscpp"/>
+  <depend package="std_msgs"/>
+</package>
+
+
