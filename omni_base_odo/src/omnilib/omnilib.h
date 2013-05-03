@@ -22,26 +22,8 @@
 #ifndef OMNIDRIVE_H 
 #define OMNIDRIVE_H 
 
-typedef struct {
-  int slave_state[4];
-  int slave_online[4];
-  int slave_operational[4];
-  int master_link;
-  int master_al_states;
-  int master_slaves_responding;
-  int working_counter;
-  int working_counter_state;
-} commstatus_t;
-
-int omnidrive_init(void);
-int omnidrive_drive(double x, double y, double a);
 void omnidrive_set_correction(double drift);
-int omnidrive_odometry(double w1,double w2,double w3,double w4,double *x, double *y, double *a);
-int omnidrive_shutdown(void);
-
-void omnidrive_status(char *drive0, char *drive1, char *drive2, char *drive3, int *estop);
-
-commstatus_t omnidrive_commstatus();
+int omnidrive_odometry(double Vel1,double Vel2,double Vel3,double Vel4,double Pos1,double Pos2,double Pos3,double Pos4,double *x, double *y, double *a);
 
 double omnidrive_limit(double x, double l);
 

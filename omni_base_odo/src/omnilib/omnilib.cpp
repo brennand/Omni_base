@@ -57,13 +57,9 @@ uint32_t last_odometry_position[4]={0, 0, 0, 0};
 double odometry[3] = {0, 0, 0}; //In Tick/s
 
 int status[4];
-commstatus_t commstatus;
 
-// This init the controller.
-int omnidrive_init(void)
-{
-	return 0;
-}
+
+
 
 
 
@@ -146,109 +142,46 @@ void jac_inverse(double *in, double *out)
   }
 }
 
-
-int omnidrive_drive(double x, double y, double a)
-{
- 
- /*
-  // speed limits for the robot
-  double wheel_limit = 1.0 ;//0.8;  // a single wheel may drive this fast (m/s)
-  double cart_limit = 0.5 ; //0.5;   // any point on the robot may move this fast (m/s)
-  double radius = 0.7;       // (maximum) radius of the robot (m)
-
-  // 0.5 m/s is 1831 ticks. kernel limit is 2000 ticks.
-
-  double corr_wheels, corr_cart, corr;
-
-  //omniwrite_t tar;
-  //memset(&tar, 0, sizeof(tar));
- 
-  double cartesian_speeds[3] = {x, y, a};
-  double wheel_speeds[4];
-  int i;
-
-  //TODO: check if the robot is up. if not, return immediately
-  
-  //tar.magic_version = OMNICOM_MAGIC_VERSION;
-
-  // check for limits
-
-  // cartesian limit: add linear and angular parts
-  corr_cart = cart_limit / (sqrt(x*x + y*y) + radius*fabs(a));
-
-  // wheel limit: for one wheel, x,y and a always add up
-  corr_wheels = wheel_limit / (fabs(x) + fabs(y) + fabs(a));
-
-  // get limiting factor as min(1, corr_cart, corr_wheels)
-  corr = (1 < corr_cart) ? 1 : ((corr_cart < corr_wheels) ? corr_cart : corr_wheels);
-
-  jac_forward(cartesian_speeds, wheel_speeds);
-
-  for(i = 0; i < 4; i++) {
-    tar.target_velocity[i] = wheel_speeds[i] * corr * drive_constant;
-    //tar.torque_set_value[i] = 0.0;
-  }
-
-  // Let the kernel know the velocities we want to set. 
-
-	//Pass these back
-  //omni_write_data(tar);
-*/
-  return 0;
-}
-
 void omnidrive_set_correction(double drift)
 {
   odometry_correction = drift;
 }
 
-int omnidrive_odometry(double w1,double w2,double w3,double w4,double *x, double *y, double *a)
+int omnidrive_odometry(double Vel1,double Vel2,double Vel3,double Vel4,double Pos1,double Pos2,double Pos3,double Pos4,double *x, double *y, double *a)
 {
 
 //  omniread_t cur; // Current velocities / torques / positions 
-  int i;
+//  int i;
   double d_wheel[4], d[3], ang;
 
 	double position[4];
-	position[0] = w1;
-	position[1] = w2;	
-	position[2] = w3;
-	position[3] = w4;
+	position[0] = Pos1;
+	position[1] = Pos2;	
+	position[2] = Pos3;
+	position[3] = Pos4;
+	
+	d_wheel[0] = Vel1;
+	d_wheel[1] = Vel2;
+	d_wheel[2] = Vel3;
+	d_wheel[3] = Vel4;
 
-  /* Read data from kernel module. */
- // cur = omni_read_data();
-	/*
-  // copy status values
-  for(i=0; i < 4; i++)
-    status[i] = cur.status[i];
-
-  for(i=0; i < 4; i++) {
-    commstatus.slave_state[i] = cur.slave_state[i];
-    commstatus.slave_online[i] = cur.slave_online[i];
-    commstatus.slave_operational[i] = cur.slave_operational[i];
-  }
-  commstatus.master_link = cur.master_link;
-  commstatus.master_al_states = cur.master_al_states;
-  commstatus.master_slaves_responding = cur.master_slaves_responding;
-  commstatus.working_counter = cur.working_counter;
-  commstatus.working_counter_state = cur.working_counter_state;
-
-	*/
 	
   /* start at (0, 0, 0) */
+ 
+ /*
   if(!odometry_initialized) {
     for (i = 0; i < 4; i++){
       last_odometry_position[i] = position[i];
   	}
     odometry_initialized = 1;
   }
-
+	*/
   /* compute differences of encoder readings and convert to meters */
-  for (i = 0; i < 4; i++) {
-    d_wheel[i] = (int) (position[i] - last_odometry_position[i]) * (1.0/(odometry_constant*odometry_correction));
+//  for (i = 0; i < 4; i++) {
+  //  d_wheel[i] = (int) (position[i] - last_odometry_position[i]) * (1.0/(odometry_constant*odometry_correction));
     /* remember last wheel position */
-    last_odometry_position[i] = position[i];
-  }
+  //  last_odometry_position[i] = position[i];
+//  }
 
 	//Give the difference in wheel position and returns the change in Cartisen
   jac_inverse(d_wheel, d);
@@ -267,21 +200,6 @@ int omnidrive_odometry(double w1,double w2,double w3,double w4,double *x, double
   return 0;
 }
 
-commstatus_t omnidrive_commstatus()
-{
-  return commstatus;
-}
-
-void omnidrive_status(char *drive0, char *drive1, char *drive2, char *drive3, int *estop)
-{
-  //drive_status(drive0, 0);
-  //drive_status(drive1, 1);
-  //drive_status(drive2, 2);
-  //drive_status(drive3, 3);
-
-  //if(estop)
-  //  *estop = 0x80 & (status[0] & status[1] & status[2] & status[3]);
-}
 
 double omnidrive_limit(double x, double l){
 	if(x>l) {

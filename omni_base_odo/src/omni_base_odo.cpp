@@ -55,7 +55,7 @@ public:
   void main();
 };
 
-	std::vector<double> Pos; 
+	std::vector<double> Pos,Vel; 
 	int got_pos;
 /*****************************************************************************/
 /* 												Omni Instantiation                     						 */
@@ -72,6 +72,7 @@ Omnidrive::Omnidrive() :
 
 void base_state(const sensor_msgs::JointState::ConstPtr& msg){
     Pos = msg->position;
+    Vel = msg->velocity;
   	got_pos = 1;
 
  }
@@ -95,9 +96,6 @@ void Omnidrive::main()
 
   double x=0, y=0, a=0;
 
-  int tf_publish_counter=0;
-  int tf_send_rate = loop_frequency / tf_frequency;
-
 
 	//IO
   ros::Subscriber sub = n_.subscribe("/base_interface/state", 1000, base_state);
@@ -106,11 +104,7 @@ void Omnidrive::main()
 
   acc_max /= loop_frequency;
 
-  if(omnidrive_init() != 0) {
-    ROS_ERROR("failed to initialize omnidrive");
-    ROS_ERROR("Check that the base is turned on, if it is ask a supervisor!");
-    return;
-  }
+
   // This function is used to add a correction value if the base seems to be slightly off.
   omnidrive_set_correction(drift);
 
@@ -124,16 +118,16 @@ void Omnidrive::main()
 		//This make sure you don't get an error for the vector not being set.
 		if(got_pos == 1){
 
-			omnidrive_odometry(Pos[0],Pos[1],Pos[2],Pos[3], &x, &y, &a);
+			omnidrive_odometry(Vel[0],Vel[1],Vel[2],Vel[3],Pos[0],Pos[1],Pos[2],Pos[3], &x, &y, &a);
 
-			printf("x %f, y %f, a%f\n",x,y,a);
+			//printf("x %f, y %f, a%f\n",x,y,a);
 			
 			//
 			tf::Quaternion q;
 			q.setRPY(0, 0, a);
 			tf::Transform pose(q, tf::Point(x, y, 0.0));
 			transforms.sendTransform(tf::StampedTransform(pose, current_time, frame_id_, child_frame_id_));
-			tf_publish_counter = 0;
+			//tf_publish_counter = 0;
 
 			//since all odometry is 6DOF we'll need a quaternion created from yaw
     	geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(a);//th);
