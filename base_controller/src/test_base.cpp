@@ -7,6 +7,7 @@
 #include "ros/ros.h"
 #include "sensor_msgs/JointState.h"
 #include "sensor_msgs/Joy.h"
+#include "geometry_msgs/Twist.h"
 
 #include <string>
 #include <vector>
