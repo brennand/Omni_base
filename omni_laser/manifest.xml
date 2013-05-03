@@ -1,0 +1,14 @@
+<package>
+  <description brief="omni_laser">
+
+     omni_laser
+
+  </description>
+  <author>jerry</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/omni_laser</url>
+
+</package>
+
+
