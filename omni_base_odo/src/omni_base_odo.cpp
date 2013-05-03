@@ -115,7 +115,7 @@ void Omnidrive::main()
   omnidrive_set_correction(drift);
 
 
-
+	ros::Time current_time;
 
   ros::Rate r(loop_frequency);
 	printf("Entering ROS main loop\n");
@@ -126,7 +126,7 @@ void Omnidrive::main()
 
 			omnidrive_odometry(Pos[0],Pos[1],Pos[2],Pos[3], &x, &y, &a);
 
-			printf("x %d, y %d, a%d\n",x,y,a);
+			printf("x %f, y %f, a%f\n",x,y,a);
 			
 			//
 			tf::Quaternion q;
@@ -134,6 +134,9 @@ void Omnidrive::main()
 			tf::Transform pose(q, tf::Point(x, y, 0.0));
 			transforms.sendTransform(tf::StampedTransform(pose, current_time, frame_id_, child_frame_id_));
 			tf_publish_counter = 0;
+
+			//since all odometry is 6DOF we'll need a quaternion created from yaw
+    	geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(a);//th);
 
 			//next, we'll publish the odometry message over ROS
 	    nav_msgs::Odometry odom;
@@ -144,13 +147,13 @@ void Omnidrive::main()
 	    odom.pose.pose.position.x = x;
 	    odom.pose.pose.position.y = y;
 	    odom.pose.pose.position.z = 0.0;
-	    odom.pose.pose.orientation = q;
+	    odom.pose.pose.orientation = odom_quat;
 	
 	    //set the velocity
 	    odom.child_frame_id = child_frame_id_;
-	    odom.twist.twist.linear.x = vx;
-	    odom.twist.twist.linear.y = vy;
-	    odom.twist.twist.angular.z = vth;
+	    odom.twist.twist.linear.x = x;//vx;
+	    odom.twist.twist.linear.y = y;//vy;
+	    odom.twist.twist.angular.z = 0.0;//vth;
 	
 	    //publish the message
 	    odom_pub.publish(odom);
