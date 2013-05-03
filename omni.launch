@@ -4,4 +4,8 @@
  <node pkg="robot_state_publisher" type="state_publisher" name="rob_st_pub" >
   <remap from="joint_states" to="base_interface/state" />
  </node>
+ <include file="$(find omni_laser)/launch/laser.launch"/>
+
+
+
 </launch>
