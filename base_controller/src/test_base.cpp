@@ -73,7 +73,9 @@ std::vector<double> des_pos;
 std::vector<double> des_vel;  
 std::vector<double> des_eff; 
 
-double des = 0.0;
+double des_x = 0.0;
+double des_y = 0.0;
+double des_a = 0.0;
 
 sensor_msgs::Joy::ConstPtr joy_msg;
 
@@ -88,7 +90,9 @@ void ps3dataCallback(const sensor_msgs::Joy::ConstPtr& msg){
 
 	joy_msg = msg;
 
-        des = 10.0*joy_msg->axes[PS3_AXIS_STICK_LEFT_UPWARDS];
+        des_x = 10.0*joy_msg->axes[PS3_AXIS_STICK_LEFT_UPWARDS];
+        des_y = 10.0*joy_msg->axes[PS3_AXIS_STICK_LEFT_LEFTWARDS];
+        des_a = 10.0*joy_msg->axes[PS3_AXIS_STICK_RIGHT_LEFTWARDS];
 
 }
 
@@ -100,6 +104,9 @@ int main(int argc, char **argv)
   
   //This is the msg listener and the msg caster.
   ros::Publisher js_pub = n.advertise<sensor_msgs::JointState>("/base_interface/command", 1000);
+  ros::Publisher tw_pub = n.advertise<geometry_msgs::Twist>("/mecanum_control/des_twist", 1000);
+
+
   ros::Subscriber sub = n.subscribe("/base_interface/state", 1000, desiredCallback); //Des_joint_states_Bioloid
   ros::Subscriber ps3_sub = n.subscribe("/joy", 1000, ps3dataCallback);
   
@@ -146,6 +153,16 @@ int main(int argc, char **argv)
     js.header.frame_id = "/world";
 
     js.name = name;
+    
+    geometry_msgs::Twist tw;
+   
+    
+    	tw.linear.x = des_x;
+			tw.linear.y = des_y;
+			tw.angular.z = des_a;
+    tw_pub.publish(tw);
+    
+    
     //Send a packet then wait for the packet to be returned.
 
 //des = 2*sin(counter*0.0001);
@@ -174,7 +191,7 @@ int main(int argc, char **argv)
     js.velocity = des_vel;
     js.effort = des_eff;
 
-    js_pub.publish(js);
+   // js_pub.publish(js);
 
     ros::spinOnce();
     loop_rate.sleep();
