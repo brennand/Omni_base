@@ -1,0 +1,1 @@
+/usr/bin/gcc  -O2 -g     -pthread CMakeFiles/sixpair.dir/sixpair.o  -o ../bin/sixpair -rdynamic -L/opt/ros/fuerte/lib -lusb -Wl,-rpath,/opt/ros/fuerte/lib 
